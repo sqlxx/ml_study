@@ -3,7 +3,6 @@ import mnist_loader
 import random
 import json
 import sys
-import matplotlib.pyplot as plot
 
 class CrossEntropyCost(object):
 
