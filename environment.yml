@@ -6,6 +6,7 @@ dependencies:
   - appnope=0.1.4
   - asttokens=3.0.0
   - blas=1.0
+  - bottleneck=1.4.2
   - brotli=1.1.0
   - brotli-bin=1.1.0
   - brotli-python=1.0.9
@@ -78,6 +79,7 @@ dependencies:
   - nest-asyncio=1.6.0
   - networkx=3.5
   - nomkl=1.0
+  - numexpr=2.11.0
   - numpy=1.26.4
   - numpy-base=1.26.4
   - openjpeg=2.4.0
@@ -85,6 +87,7 @@ dependencies:
   - opentelemetry-api=1.30.0
   - optree=0.14.1
   - packaging=25.0
+  - pandas=2.3.1
   - parso=0.8.4
   - pexpect=4.9.0
   - pillow=11.0.0
@@ -103,7 +106,9 @@ dependencies:
   - pyparsing=3.2.5
   - python=3.12.11
   - python-dateutil=2.9.0.post0
+  - python-tzdata=2025.3
   - pytorch=2.5.1
+  - pytz=2025.2
   - pyzmq=26.2.0
   - qhull=2020.2
   - readline=8.2
@@ -133,6 +138,11 @@ dependencies:
   - zlib=1.2.13
   - zstd=1.5.6
   - pip:
+    - certifi==2026.1.4
+    - charset-normalizer==3.4.4
+    - idna==3.11
     - pygame==2.6.1
+    - requests==2.32.5
+    - urllib3==2.6.3
 
 prefix: "/Users/sqlxx/mamba/envs/rl"
