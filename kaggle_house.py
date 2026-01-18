@@ -4,6 +4,7 @@ import torch
 from torch import nn
 import numpy as np
 import matplotlib.pyplot as plt
+from device import device
 
 downloader.DATA_HUB['kaggle_house_train'] = (downloader.DATA_URL + 'kaggle_house_pred_train.csv', '585e9cc93e70b39160e7921475f9bcd7d31219ce')
 downloader.DATA_HUB['kaggle_house_test'] = (downloader.DATA_URL + 'kaggle_house_pred_test.csv', 'fa19780a7b011d9b009e8bff8e99922a8ee2eb90')
@@ -26,9 +27,9 @@ all_features = all_features.astype(np.float32)
 
 n_train = train_data.shape[0]
 print('training data is', n_train)
-train_features = torch.tensor(all_features[:n_train].to_numpy(), dtype=torch.float32)
-test_features = torch.tensor(all_features[n_train:].to_numpy(), dtype=torch.float32)
-train_labels = torch.tensor(train_data.SalePrice.values.reshape(-1, 1), dtype=torch.float32)
+train_features = torch.tensor(all_features[:n_train].to_numpy(), dtype=torch.float32, device=device)
+test_features = torch.tensor(all_features[n_train:].to_numpy(), dtype=torch.float32, device=device)
+train_labels = torch.tensor(train_data.SalePrice.values.reshape(-1, 1), dtype=torch.float32, device=device)
 
 loss = nn.MSELoss()
 in_features = train_features.shape[1]
@@ -36,7 +37,7 @@ print(train_features.shape)
 
 def get_net():
   net = nn.Sequential(nn.Linear(in_features, 1))
-  return net
+  return net.to(device)
 
 def log_rmse(net, features, labels):
   clipped_preds = torch.clamp(net(features), 1, float('inf'))
@@ -104,8 +105,8 @@ def k_fold(k, X_train, y_train, num_epochs, learning_rate, weight_decay, batch_s
 
 
 k, num_epochs, lr, weight_decay, batch_size = 5, 120, 4, 0.01, 16
-# train_l, valid_l = k_fold(k, train_features, train_labels, num_epochs, lr, weight_decay, batch_size)
-# print('%d-fold validation: avg train rmse %f, avg valid rmse %f' % (k, train_l, valid_l))
+train_l, valid_l = k_fold(k, train_features, train_labels, num_epochs, lr, weight_decay, batch_size)
+print('%d-fold validation: avg train rmse %f, avg valid rmse %f' % (k, train_l, valid_l))
 
 def train_and_pred(train_features, test_features, train_labels, test_data, num_epochs, lr, weight_decay, batch_size):
   net = get_net()
@@ -117,10 +118,10 @@ def train_and_pred(train_features, test_features, train_labels, test_data, num_e
   plt.show()
 
   print(f'training rmse: {float(train_ls[-1]):f}')
-  preds = net(test_features).detach().numpy()
+  preds = net(test_features).cpu().detach().numpy()
   test_data['SalePrice'] = pd.Series(preds.reshape(1, -1)[0])
   submission = pd.concat([test_data['Id'], test_data['SalePrice']], axis=1)
   submission.to_csv('submission.csv', index=False)
 
 
-train_and_pred(train_features, test_features, train_labels, test_data, num_epochs, lr, weight_decay, batch_size)
+# train_and_pred(train_features, test_features, train_labels, test_data, num_epochs, lr, weight_decay, batch_size)
